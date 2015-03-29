@@ -1097,8 +1097,12 @@ static ssize_t f2fs_direct_IO(int rw, struct kiocb *iocb,
 	struct file *file = iocb->ki_filp;
 	struct address_space *mapping = file->f_mapping;
 	struct inode *inode = mapping->host;
-	size_t count = iov_length(iov, nr_segs);
+	size_t count;
 	int err;
+
+#ifndef CONFIG_AIO_OPTIMIZATION
+	count = iov_length(iov, nr_segs);
+#endif
 
 	/* we don't need to use inline_data strictly */
 	if (f2fs_has_inline_data(inode)) {
